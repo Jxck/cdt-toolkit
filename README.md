@@ -6,9 +6,8 @@ dictionary-compressed payloads for Brotli and Zstandard, following
 
 ## Commands
 
-- `cdt dictionary`: generate a raw shared dictionary
-- `cdt compress`: compress files with a raw dictionary and emit `.br`, `.zstd`,
-  `.dcb`, and `.dcz`
+- `cdt dictionary`: build a shared dictionary from inputs
+- `cdt compress`: compress inputs into `.br` / `.zstd` / `.dcb` / `.dcz`
 
 ## Installation
 
@@ -42,7 +41,7 @@ Build a shared dictionary from a corpus:
 ```sh
 cdt dictionary \
   --output dictionary.dict \
-  tests/fixtures/entries/*.html
+  tests/fixtures/html/*.html
 ```
 
 Compress files with that dictionary and emit CDT wrapper payloads:
@@ -51,7 +50,7 @@ Compress files with that dictionary and emit CDT wrapper payloads:
 cdt compress \
   --dict dictionary.dict \
   --output-dir ./work/compressed \
-  tests/fixtures/entries/*.html
+  tests/fixtures/html/*.html
 ```
 
 If you also want raw codec payloads, pass `--raw-brotli` and/or `--raw-zstd`.
@@ -74,8 +73,8 @@ cargo run -- --help
 Integration tests cover:
 
 - determinism (two runs produce identical bytes)
-- byte parity with the Ruby reference implementation against the fixtures
-  under `tests/fixtures/entries/`
+- regression against a checked-in baseline dictionary built from the RFC
+  corpus under `tests/fixtures/html/`
 
 `scripts/rehearse-release.sh` walks the release flow end-to-end in a scratch
 repo — test, release build, tarball, extract, and a smoke check that the

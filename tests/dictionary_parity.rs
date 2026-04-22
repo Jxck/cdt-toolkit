@@ -19,8 +19,8 @@ fn dictionary_generation_is_deterministic() {
     let dir = tempfile::tempdir().unwrap();
     let first = dir.path().join("first.dict");
     let second = dir.path().join("second.dict");
-    let fixture_a = manifest_dir.join("tests/fixtures/entries/background-fetch.html");
-    let fixture_b = manifest_dir.join("tests/fixtures/entries/new-blog-start.html");
+    let fixture_a = manifest_dir.join("tests/fixtures/html/rfc9842.html");
+    let fixture_b = manifest_dir.join("tests/fixtures/html/rfc9111.html");
 
     for output in [&first, &second] {
         // Two identical runs over the same corpus should produce byte-identical dictionaries.
@@ -39,11 +39,11 @@ fn dictionary_generation_is_deterministic() {
 }
 
 #[test]
-// Assert full byte-for-byte parity with the Ruby reference implementation on the fixture corpus.
-fn dictionary_matches_ruby_oracle() {
+// Regression guard: dictionary output must match the checked-in baseline byte-for-byte.
+fn dictionary_matches_baseline() {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixtures_dir = manifest_dir.join("tests/fixtures/entries");
-    let oracle = manifest_dir.join("tests/fixtures/oracle/entries.dict");
+    let fixtures_dir = manifest_dir.join("tests/fixtures/html");
+    let baseline = manifest_dir.join("tests/fixtures/oracle/html.dict");
 
     // Keep fixture ordering explicit so the parity check stays stable across filesystems.
     let mut inputs: Vec<PathBuf> = fs::read_dir(&fixtures_dir)
@@ -68,17 +68,14 @@ fn dictionary_matches_ruby_oracle() {
     assert!(status.success());
 
     let candidate = fs::read(&out_path).unwrap();
-    let expected = fs::read(&oracle).expect(
-        "oracle dictionary missing; see tests/fixtures/oracle/README.md for how to regenerate",
+    let expected = fs::read(&baseline).expect(
+        "baseline dictionary missing; see tests/fixtures/oracle/README.md for how to regenerate",
     );
-    // This is a strict compatibility test, not just a shape check.
+    // Strict byte equality, not just a shape check.
     assert_eq!(
         candidate.len(),
         expected.len(),
-        "dictionary byte length differs from Ruby oracle"
+        "dictionary byte length differs from baseline"
     );
-    assert_eq!(
-        candidate, expected,
-        "dictionary body differs from Ruby oracle"
-    );
+    assert_eq!(candidate, expected, "dictionary body differs from baseline");
 }

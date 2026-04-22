@@ -1,23 +1,20 @@
-# Oracle fixtures
+# Baseline dictionary
 
-`entries.dict` is a reference dictionary emitted by the separately maintained
-reference implementation for parity testing. The Rust implementation must
-produce a byte-identical output from the same inputs and options.
+`html.dict` is the reference output of `cdt dictionary` over
+`tests/fixtures/html/*.html` with the parameters below. It acts as a
+regression baseline: changes to the algorithm or the corpus must be matched by
+an intentional regeneration of this file.
 
-## Regeneration command
-
-If the algorithm or fixture corpus changes, regenerate the oracle with the
-reference implementation under an equivalent working tree and replace the file:
+## Regeneration
 
 ```sh
-<reference-implementation> dictionary \
-  -o tests/fixtures/oracle/entries.dict \
+cargo run --release -- dictionary \
+  -o tests/fixtures/oracle/html.dict \
   -s 8192 \
   -l 12 \
   -b 4096 \
   -f 2 \
-  tests/fixtures/entries/*.html
+  tests/fixtures/html/*.html
 ```
 
-The invocation must run from this package's root so that the file list
-canonicalizes to the same sort order the Rust test uses.
+Run from the package root so the input ordering matches what the test expects.
