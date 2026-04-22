@@ -45,13 +45,25 @@ fn html_dictionary_matches_baseline() {
         "tests/fixtures/html",
         "html",
         "tests/fixtures/oracle/html.dict",
+        8192,
+        12,
+        1024,
+        3,
     );
 }
 
 #[test]
 // Regression guard: JavaScript dictionary output must match the checked-in baseline byte-for-byte.
 fn js_dictionary_matches_baseline() {
-    assert_dictionary_matches_baseline("tests/fixtures/js", "js", "tests/fixtures/oracle/js.dict");
+    assert_dictionary_matches_baseline(
+        "tests/fixtures/js",
+        "js",
+        "tests/fixtures/oracle/js.dict",
+        8192,
+        8,
+        2048,
+        2,
+    );
 }
 
 #[test]
@@ -61,10 +73,22 @@ fn css_dictionary_matches_baseline() {
         "tests/fixtures/css",
         "css",
         "tests/fixtures/oracle/css.dict",
+        8192,
+        8,
+        1024,
+        2,
     );
 }
 
-fn assert_dictionary_matches_baseline(fixtures_dir: &str, extension: &str, baseline_path: &str) {
+fn assert_dictionary_matches_baseline(
+    fixtures_dir: &str,
+    extension: &str,
+    baseline_path: &str,
+    size: usize,
+    slice_length: usize,
+    block_length: usize,
+    min_frequency: usize,
+) {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let baseline = manifest_dir.join(baseline_path);
 
@@ -85,7 +109,10 @@ fn assert_dictionary_matches_baseline(fixtures_dir: &str, extension: &str, basel
         .current_dir(&manifest_dir)
         .args(["dictionary", "-o"])
         .arg(&out_path)
-        .args(["-s", "8192", "-l", "12", "-b", "4096", "-f", "2"])
+        .args(["-s", &size.to_string()])
+        .args(["-l", &slice_length.to_string()])
+        .args(["-b", &block_length.to_string()])
+        .args(["-f", &min_frequency.to_string()])
         .args(&inputs);
     let status = command.status().expect("failed to run cdt dictionary");
     assert!(status.success());

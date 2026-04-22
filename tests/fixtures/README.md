@@ -1,7 +1,8 @@
 # Test fixtures
 
 This directory contains the checked-in corpus used by dictionary regression
-tests and the baseline dictionary generated from that corpus.
+tests and tuning sweeps, plus the baseline dictionary generated from that
+corpus.
 
 ## Corpus
 
@@ -55,13 +56,13 @@ source, version, and license are explicit.
 ## Baseline dictionaries
 
 `oracle/html.dict` is the reference output of `cdt dictionary` over
-`tests/fixtures/html/*.html`.
+`tests/fixtures/html/*.html` using `-s 8192 -l 12 -b 1024 -f 3`.
 
 `oracle/js.dict` is the reference output of `cdt dictionary` over
-`tests/fixtures/js/*.js`.
+`tests/fixtures/js/*.js` using `-s 8192 -l 8 -b 2048 -f 2`.
 
 `oracle/css.dict` is the reference output of `cdt dictionary` over
-`tests/fixtures/css/*.css`.
+`tests/fixtures/css/*.css` using `-s 8192 -l 8 -b 1024 -f 2`.
 
 Changes to the algorithm or any corpus must be matched by an intentional
 regeneration of the corresponding baseline.
@@ -73,23 +74,23 @@ regeneration of the corresponding baseline.
   -o tests/fixtures/oracle/html.dict \
   -s 8192 \
   -l 12 \
-  -b 4096 \
-  -f 2 \
+  -b 1024 \
+  -f 3 \
   tests/fixtures/html/*.html
 
 ~/.cargo/bin/cargo run --release -- dictionary \
   -o tests/fixtures/oracle/js.dict \
   -s 8192 \
-  -l 12 \
-  -b 4096 \
+  -l 8 \
+  -b 2048 \
   -f 2 \
   tests/fixtures/js/*.js
 
 ~/.cargo/bin/cargo run --release -- dictionary \
   -o tests/fixtures/oracle/css.dict \
   -s 8192 \
-  -l 12 \
-  -b 4096 \
+  -l 8 \
+  -b 1024 \
   -f 2 \
   tests/fixtures/css/*.css
 ```

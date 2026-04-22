@@ -67,6 +67,7 @@ If you also want raw codec payloads, pass `--raw-brotli` and/or `--raw-zstd`.
 ```sh
 cargo test
 cargo run -- --help
+./scripts/tune-fixtures.sh
 ./scripts/rehearse-release.sh
 ```
 
@@ -75,6 +76,20 @@ Integration tests cover:
 - determinism (two runs produce identical bytes)
 - regression against checked-in baseline dictionaries built from the HTML,
   JavaScript, and CSS corpora under `tests/fixtures/`
+
+## Tuning
+
+Use the checked-in fixture corpora to sweep dictionary parameters and compare
+net compressed size:
+
+```sh
+./scripts/tune-fixtures.sh
+```
+
+The script writes per-corpus CSV reports and a `summary.txt` under
+`work/tune-fixtures/`. Each row records the parameter tuple, dictionary size,
+raw Brotli / Zstandard totals, wrapped `dcb` / `dcz` totals, and net bytes
+including the dictionary.
 
 `scripts/rehearse-release.sh` walks the release flow end-to-end in a scratch
 repo — test, release build, tarball, extract, and a smoke check that the

@@ -33,6 +33,9 @@ Main modules:
   Verifies determinism and byte-for-byte match against the checked-in baseline dictionary.
 - `tests/compress_parity.rs`
   Verifies compression output and output-path handling.
+- `scripts/tune-fixtures.sh`
+  Sweeps dictionary parameters against the checked-in fixture corpora and
+  records compression totals for tuning work.
 
 ## Flow
 
