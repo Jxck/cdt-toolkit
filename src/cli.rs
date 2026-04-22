@@ -12,9 +12,9 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    // Build a shared dictionary from a corpus of input files.
+    /// Build a raw dictionary from inputs
     Dictionary(DictionaryArgs),
-    // Compress inputs with an existing raw dictionary.
+    /// Compress inputs into .br/.zstd or .dcb/.dcz with dictionary
     Compress(CompressArgs),
 }
 

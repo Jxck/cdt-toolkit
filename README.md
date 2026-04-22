@@ -1,8 +1,8 @@
-# cdt-toolkit
+# Compression Dictionary Transport Toolkit
 
-`cdt` is a command-line toolkit for building shared compression dictionaries
-and producing dictionary-compressed payloads for Brotli and Zstandard-based
-Compression Dictionary Transport workflows.
+`cdt` is a CLI for building shared compression dictionaries and
+dictionary-compressed payloads for Brotli and Zstandard, following
+[RFC 9842](https://www.rfc-editor.org/rfc/rfc9842).
 
 ## Commands
 
@@ -12,22 +12,56 @@ Compression Dictionary Transport workflows.
 
 ## Installation
 
+### From crates.io
+
+```sh
+cargo install cdt-toolkit
+```
+
+Installs the `cdt` binary into `$CARGO_HOME/bin` (usually `~/.cargo/bin`).
+Requires Rust 1.85 or newer.
+
 ### From source
 
 ```sh
 cargo install --path .
 ```
 
-This installs the `cdt` binary into `$CARGO_HOME/bin` (typically
-`~/.cargo/bin`). Ensure that directory is on your `PATH`.
+Installs `cdt` into `$CARGO_HOME/bin` (usually `~/.cargo/bin`); make sure it
+is on your `PATH`. Requires Rust 1.85 or newer.
 
-The package requires Rust 1.85 or newer.
+### Prebuilt binary
 
-### Prebuilt binary (release distribution)
+Grab a `.tar.gz` for your platform from GitHub Releases, verify the `.sha256`,
+and drop `cdt` onto your `PATH`.
 
-Download a `.tar.gz` archive for your platform from the GitHub Releases page,
-verify the accompanying `.sha256` checksum, and place the `cdt` binary on your
-`PATH`.
+## Quick Start
+
+Build a shared dictionary from a corpus:
+
+```sh
+cdt dictionary \
+  --output dictionary.dict \
+  tests/fixtures/entries/*.html
+```
+
+Compress files with that dictionary and emit CDT wrapper payloads:
+
+```sh
+cdt compress \
+  --dict dictionary.dict \
+  --output-dir ./work/compressed \
+  tests/fixtures/entries/*.html
+```
+
+If you also want raw codec payloads, pass `--raw-brotli` and/or `--raw-zstd`.
+
+## Output Formats
+
+- `.br`: raw Brotli payload compressed with the shared dictionary
+- `.zstd`: raw Zstandard payload compressed with the shared dictionary
+- `.dcb`: CDT-wrapped Brotli payload
+- `.dcz`: CDT-wrapped Zstandard payload
 
 ## Development
 
@@ -37,18 +71,17 @@ cargo run -- --help
 ./scripts/rehearse-release.sh
 ```
 
-Integration tests verify:
+Integration tests cover:
 
 - determinism (two runs produce identical bytes)
-- byte parity with the Ruby reference implementation on the fixture corpus
+- byte parity with the Ruby reference implementation against the fixtures
   under `tests/fixtures/entries/`
 
-`scripts/rehearse-release.sh` performs a local post-extract rehearsal: it copies
-the package into a scratch git repository, runs `cargo test`, builds a release
-binary, assembles the `.tar.gz` artifact, extracts it, and verifies the packaged
-`cdt` binary starts successfully.
+`scripts/rehearse-release.sh` walks the release flow end-to-end in a scratch
+repo — test, release build, tarball, extract, and a smoke check that the
+packaged `cdt` starts.
 
 ## License
 
-MIT. See `LICENSE`. Third-party license notices are in `NOTICE` and
+MIT. See `LICENSE`. Third-party notices are in `NOTICE` and
 `THIRD_PARTY_LICENSES/`.
