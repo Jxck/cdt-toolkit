@@ -1,0 +1,37 @@
+cdt-toolkit
+Copyright (c) 2026 Jxck
+
+This product includes software developed by third parties.
+Their copyright notices and license terms are reproduced in the
+`THIRD_PARTY_LICENSES/` directory of this distribution.
+
+The `cdt` binary statically links or embeds code derived from:
+
+- libbrotli (MIT License)
+  Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+  https://github.com/google/brotli
+
+- libzstd (BSD 3-Clause License)
+  Copyright (c) Meta Platforms, Inc. and affiliates.
+  https://github.com/facebook/zstd
+
+- clap (MIT OR Apache-2.0)
+  Copyright (c) Individual contributors.
+  https://github.com/clap-rs/clap
+
+- sha2 (MIT OR Apache-2.0)
+  Copyright (c) 2006-2009 Graydon Hoare, 2009-2013 Mozilla Foundation,
+  2016-2024 RustCrypto Developers.
+  https://github.com/RustCrypto/hashes
+
+- base64 (MIT OR Apache-2.0)
+  Copyright (c) 2015 Alice Maz.
+  https://github.com/marshallpierce/rust-base64
+
+- brotlic-sys (MIT OR Apache-2.0)
+  Copyright (c) 2022 Johannes Walter.
+  https://github.com/JakobDev/brotlic
+
+- zstd-safe (MIT OR Apache-2.0)
+  Copyright (c) 2016 Alexandre Bury.
+  https://github.com/gyscos/zstd-rs
