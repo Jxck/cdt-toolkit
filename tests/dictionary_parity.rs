@@ -40,17 +40,40 @@ fn dictionary_generation_is_deterministic() {
 
 #[test]
 // Regression guard: dictionary output must match the checked-in baseline byte-for-byte.
-fn dictionary_matches_baseline() {
+fn html_dictionary_matches_baseline() {
+    assert_dictionary_matches_baseline(
+        "tests/fixtures/html",
+        "html",
+        "tests/fixtures/oracle/html.dict",
+    );
+}
+
+#[test]
+// Regression guard: JavaScript dictionary output must match the checked-in baseline byte-for-byte.
+fn js_dictionary_matches_baseline() {
+    assert_dictionary_matches_baseline("tests/fixtures/js", "js", "tests/fixtures/oracle/js.dict");
+}
+
+#[test]
+// Regression guard: CSS dictionary output must match the checked-in baseline byte-for-byte.
+fn css_dictionary_matches_baseline() {
+    assert_dictionary_matches_baseline(
+        "tests/fixtures/css",
+        "css",
+        "tests/fixtures/oracle/css.dict",
+    );
+}
+
+fn assert_dictionary_matches_baseline(fixtures_dir: &str, extension: &str, baseline_path: &str) {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixtures_dir = manifest_dir.join("tests/fixtures/html");
-    let baseline = manifest_dir.join("tests/fixtures/oracle/html.dict");
+    let baseline = manifest_dir.join(baseline_path);
 
     // Keep fixture ordering explicit so the parity check stays stable across filesystems.
-    let mut inputs: Vec<PathBuf> = fs::read_dir(&fixtures_dir)
+    let mut inputs: Vec<PathBuf> = fs::read_dir(manifest_dir.join(fixtures_dir))
         .expect("failed to read fixture dir")
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.path())
-        .filter(|path| path.extension().is_some_and(|ext| ext == "html"))
+        .filter(|path| path.extension().is_some_and(|candidate| candidate == extension))
         .collect();
     inputs.sort();
 
@@ -68,9 +91,8 @@ fn dictionary_matches_baseline() {
     assert!(status.success());
 
     let candidate = fs::read(&out_path).unwrap();
-    let expected = fs::read(&baseline).expect(
-        "baseline dictionary missing; see tests/fixtures/oracle/README.md for how to regenerate",
-    );
+    let expected = fs::read(&baseline)
+        .expect("baseline dictionary missing; see tests/fixtures/README.md for how to regenerate");
     // Strict byte equality, not just a shape check.
     assert_eq!(
         candidate.len(),

@@ -73,8 +73,8 @@ cargo run -- --help
 Integration tests cover:
 
 - determinism (two runs produce identical bytes)
-- regression against a checked-in baseline dictionary built from the RFC
-  corpus under `tests/fixtures/html/`
+- regression against checked-in baseline dictionaries built from the HTML,
+  JavaScript, and CSS corpora under `tests/fixtures/`
 
 `scripts/rehearse-release.sh` walks the release flow end-to-end in a scratch
 repo — test, release build, tarball, extract, and a smoke check that the
