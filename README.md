@@ -1,5 +1,11 @@
 # Compression Dictionary Transport Toolkit
 
+[![crates.io](https://img.shields.io/crates/v/cdt-toolkit.svg)](https://crates.io/crates/cdt-toolkit)
+[![License](https://img.shields.io/crates/l/cdt-toolkit.svg)](./LICENSE)
+[![MSRV](https://img.shields.io/badge/rust-1.85%2B-blue.svg)](https://www.rust-lang.org/)
+[![CI](https://github.com/Jxck/cdt-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Jxck/cdt-toolkit/actions/workflows/ci.yml)
+[![Release](https://github.com/Jxck/cdt-toolkit/actions/workflows/release.yml/badge.svg)](https://github.com/Jxck/cdt-toolkit/actions/workflows/release.yml)
+
 `cdt` is a CLI for building shared compression dictionaries and dictionary-compressed payloads for Brotli and Zstandard, following [RFC 9842](https://www.rfc-editor.org/rfc/rfc9842).
 
 ## Commands
