@@ -2,5 +2,5 @@
 CARGO_REGISTRY_TOKEN = "op://Private/crates.io/CARGO_REGISTRY_TOKEN"
 
 [tasks.publish]
-description = "Publish cdt-toolkit to crates.io"
-run = "op run -- cargo publish --locked"
+description = "Run the full release workflow and publish cdt-toolkit"
+run = "./scripts/release.sh"

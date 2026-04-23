@@ -158,6 +158,7 @@ cargo test
 cargo run -- --help
 ./scripts/tune-fixtures.sh
 ./scripts/rehearse-release.sh
+mise run publish
 ```
 
 Integration tests cover:
@@ -183,6 +184,10 @@ including the dictionary.
 `scripts/rehearse-release.sh` walks the release flow end-to-end in a scratch
 repo — test, release build, tarball, extract, and a smoke check that the
 packaged `cdt` starts.
+
+`scripts/release.sh` is the full release driver used by `mise run publish`. It
+runs tests, `cargo publish --dry-run`, the release rehearsal, `git tag` /
+`git push --tags`, and the final `cargo publish`.
 
 ## License
 
