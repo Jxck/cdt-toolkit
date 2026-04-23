@@ -7,7 +7,7 @@ rust-version = "1.85"
 homepage = "https://github.com/Jxck/cdt-toolkit"
 repository = "https://github.com/Jxck/cdt-toolkit"
 categories = ["command-line-utilities", "compression"]
-keywords = ["compression", "brotli", "zstd", "compression dictionary transport"]
+keywords = ["compression", "brotli", "zstd"]
 license = "MIT"
 readme = "README.md"
 
