@@ -55,12 +55,101 @@ cdt compress \
 
 If you also want raw codec payloads, pass `--raw-brotli` and/or `--raw-zstd`.
 
-## Output Formats
+## Options
+
+### dictionary
+
+Builds a raw shared dictionary from the input corpus. Inputs are
+canonicalized, sorted, and deduplicated before processing so repeated runs are
+deterministic.
+
+```sh
+$ cdt dictionary -h
+Usage: cdt dictionary [OPTIONS] <INPUTS>...
+
+Arguments:
+  <INPUTS>...
+
+Options:
+  -o, --output <OUTPUT>
+  -d, --output-dir <OUTPUT_DIR>
+  -s, --size <SIZE>                    [default: 262144]
+  -l, --slice-length <SLICE_LENGTH>    [default: 12]
+  -b, --block-length <BLOCK_LENGTH>    [default: 4096]
+  -f, --min-frequency <MIN_FREQUENCY>  [default: 3]
+  -v, --verbose
+  -h, --help                           Print help
+```
+
+- `-o, --output <PATH>`: write the dictionary to an explicit file path
+- `-d, --output-dir <DIR>`: write the dictionary under `<DIR>/<sha256>.dict`;
+  mutually exclusive with `--output`
+- `-s, --size <BYTES>`: cap the emitted dictionary size; default `262144`
+  (`256 KiB`)
+- `-l, --slice-length <BYTES>`: byte length of the cross-file fragments used to
+  score reuse; default `12`
+- `-b, --block-length <BYTES>`: maximum byte length copied into the dictionary
+  when a good region is selected; default `4096`
+- `-f, --min-frequency <N>`: minimum document frequency for a slice to stay in
+  play; default `3`
+- `-v, --verbose`: print progress, selected block counts, output path, and the
+  dictionary hash
+
+`--size`, `--slice-length`, `--block-length`, and `--min-frequency` must all
+be positive, and `--block-length` must be greater than or equal to
+`--slice-length`.
+
+### compress
+
+Compresses each input with an existing dictionary and writes one or more output
+formats under an output directory. Relative input paths are preserved where
+possible.
+
+```sh
+$ cdt compress -h
+Usage: cdt compress [OPTIONS] --dict <DICT> <INPUTS>...
+
+Arguments:
+  <INPUTS>...
+
+Options:
+  -d, --dict <DICT>
+  -o, --output-dir <OUTPUT_DIR>   [default: ./work/compressed]
+  -b, --raw-brotli
+  -z, --raw-zstd
+      --delta-compression-brotli
+      --delta-compression-zstd
+  -v, --verbose
+  -h, --help                      Print help
+```
+
+- `-d, --dict <PATH>`: path to the raw dictionary file to use; required
+- `-o, --output-dir <DIR>`: destination directory for compressed files; default
+  `./work/compressed`
+- `-b, --raw-brotli`: emit raw Brotli payloads as `.br`
+- `-z, --raw-zstd`: emit raw Zstandard payloads as `.zstd`
+- `--delta-compression-brotli`: emit CDT-wrapped Brotli payloads as `.dcb`
+- `--delta-compression-zstd`: emit CDT-wrapped Zstandard payloads as `.dcz`
+- `-v, --verbose`: print each input as it is compressed
+
+If no output-format flags are given, `cdt compress` defaults to the CDT wrapper
+formats and emits both `.dcb` and `.dcz`.
+
+### Output Formats
 
 - `.br`: raw Brotli payload compressed with the shared dictionary
 - `.zstd`: raw Zstandard payload compressed with the shared dictionary
 - `.dcb`: CDT-wrapped Brotli payload
 - `.dcz`: CDT-wrapped Zstandard payload
+
+## Agent Skill
+
+For arbitrary local corpora, this repo also includes the agent skill
+[`dictionary-tuning`](./skills/dictionary-tuning/SKILL.md). Use it when you
+want an AI agent to tune `cdt dictionary` parameters for your own files,
+choose a dictionary size, and recommend a final command. It bundles
+[`tune-corpus.sh`](./skills/dictionary-tuning/scripts/tune-corpus.sh) for
+repeatable parameter sweeps over user-provided inputs.
 
 ## Development
 
@@ -77,7 +166,7 @@ Integration tests cover:
 - regression against checked-in baseline dictionaries built from the HTML,
   JavaScript, and CSS corpora under `tests/fixtures/`
 
-## Tuning
+### Tuning
 
 Use the checked-in fixture corpora to sweep dictionary parameters and compare
 net compressed size:

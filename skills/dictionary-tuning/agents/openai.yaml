@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dictionary Tuning"
+  short_description: "Tune cdt dictionary parameters on a real corpus."
+  default_prompt: "Use $dictionary-tuning to find good cdt dictionary parameters for my corpus."
