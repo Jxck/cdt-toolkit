@@ -6,8 +6,8 @@ usage() {
   cat <<'EOF'
 usage: bump-version.sh <patch|minor|major> [--dry-run]
 
-Bump the package version in Cargo.toml, commit it as v<version>, and create the
-matching git tag.
+Bump the package version in Cargo.toml, refresh Cargo.lock, commit as
+v<version>, and create the matching git tag.
 EOF
 }
 
@@ -127,6 +127,7 @@ if [[ "${dry_run}" -eq 0 ]]; then
   mv Cargo.toml.tmp Cargo.toml
 fi
 
-run_cmd git add Cargo.toml
+run_cmd cargo update --workspace
+run_cmd git add Cargo.toml Cargo.lock
 run_cmd git commit -m "${tag}"
 run_cmd git tag "${tag}"
