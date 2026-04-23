@@ -4,14 +4,14 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-usage: release.sh [--version <semver>] [--target <triple>] [--skip-rehearsal] [--dry-run]
+usage: publish.sh [--version <semver>] [--target <triple>] [--skip-rehearsal] [--dry-run]
 
 Run the full release workflow for this repo:
   1. verify the git worktree is clean
   2. run cargo test --locked
   3. run cargo publish --dry-run --locked
   4. optionally run scripts/rehearse-release.sh
-  5. create git tag v<version>
+  5. verify git tag v<version> exists on HEAD
   6. git push
   7. git push --tags
   8. op run -- cargo publish --locked
@@ -80,13 +80,15 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
-if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
-  echo "error: git tag already exists: ${tag}" >&2
+if ! git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+  echo "error: required git tag is missing: ${tag}" >&2
   exit 1
 fi
 
-if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
-  echo "error: remote git tag already exists: ${tag}" >&2
+tag_commit=$(git rev-list -n 1 "${tag}")
+head_commit=$(git rev-parse HEAD)
+if [[ "${tag_commit}" != "${head_commit}" ]]; then
+  echo "error: git tag ${tag} does not point at HEAD" >&2
   exit 1
 fi
 
@@ -101,7 +103,6 @@ if [[ "${skip_rehearsal}" -eq 0 ]]; then
   run_cmd "${rehearse_cmd[@]}"
 fi
 
-run_cmd git tag "${tag}"
 run_cmd git push
 run_cmd git push --tags
 run_cmd op run -- cargo publish --locked

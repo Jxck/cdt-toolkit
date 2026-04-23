@@ -1,6 +1,34 @@
 [env]
 CARGO_REGISTRY_TOKEN = "op://Private/crates.io/CARGO_REGISTRY_TOKEN"
 
+[tasks.patch]
+description = "Bump patch version, commit it, and create the git tag"
+run = "./scripts/bump-version.sh patch \"$@\""
+
+[tasks.minor]
+description = "Bump minor version, commit it, and create the git tag"
+run = "./scripts/bump-version.sh minor \"$@\""
+
+[tasks.major]
+description = "Bump major version, commit it, and create the git tag"
+run = "./scripts/bump-version.sh major \"$@\""
+
+[tasks.validate-dictionary-algorithm]
+description = "Run focused algorithm checks on synthetic inputs"
+run = "./scripts/validate-dictionary-algorithm.sh \"$@\""
+
+[tasks.tune-fixtures]
+description = "Sweep dictionary parameters on the checked-in fixture corpora"
+run = "./scripts/tune-fixtures.sh \"$@\""
+
+[tasks.package-release]
+description = "Package a built release binary into a tarball and checksum"
+run = "./scripts/package-release.sh \"$@\""
+
+[tasks.rehearse-release]
+description = "Rehearse the release flow in a scratch copy"
+run = "./scripts/rehearse-release.sh \"$@\""
+
 [tasks.publish]
-description = "Run the full release workflow and publish cdt-toolkit"
-run = "./scripts/release.sh"
+description = "Run the full release workflow"
+run = "./scripts/publish.sh \"$@\""
